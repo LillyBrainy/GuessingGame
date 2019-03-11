@@ -1,82 +1,93 @@
 import React, { Component } from "react";
-let tries = 0;
+import colorArray from "./Colors";
+import "./GuessingGame.css";
 
+let tries = 0;
 class GuessingGame extends Component {
   state = {
-    number: null,
-    random: Math.floor(Math.random() * 100),
+    randomColor: colorArray[Math.floor(Math.random() * colorArray.length)],
     msg: "",
-    max_guessed: 4,
+    displayTriese: "",
+    max_guessed: 3,
+    won: false,
+    lose: false
+  };
+  coloredBox = () => {
+    return colorArray.map((color, index) => {
+      return (
+        <button
+          key={index}
+          disabled={this.state.lose}
+          className="btn square"
+          style={{ backgroundColor: this.state[color] ? "#363636" : color }}
+          onClick={() => {
+            {
+              let check = this.checkAll(color);
 
-    wisdom: false
+              console.log("CHECK", check);
+              if (check) {
+                this.setState({ [color]: true });
+              }
+            }
+          }}
+        />
+      );
+    });
+  };
+  randomColor = () => {
+    const colors = colorArray;
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    console.log(this.state.randomColor);
   };
 
-  handleChange = event => {
-    this.setState({ number: event.target.value });
+  compareColor = color => {
+    const { randomColor } = this.state;
+    if (randomColor === color) {
+      this.setState({ msg: "YOU WIN!!", lose: true });
+      tries = tries + 1;
+    } else if (randomColor !== color) {
+      tries = tries + 1;
+
+      this.setState({
+        msg: "WRONG! Try Again .. ",
+        displayTriese: `${tries} / 3`
+      });
+
+      return true;
+    }
   };
 
-  checkAll = () => {
+  // handleChange = event => {
+  //   this.setState({ number: event.target.value });
+  // };
+
+  checkAll = color => {
     const { max_guessed } = this.state;
 
-    if (tries >= max_guessed) {
-      return this.setState({ msg: "GameOver" });
+    if (tries === max_guessed) {
+      this.setState({ lose: true });
     } else {
-      this.checkNumber();
-    }
-  };
-
-  checkNumber = () => {
-    const { random, number } = this.state;
-    if (number == random) {
-      return this.setState({ msg: "you won!!" });
-    } else if (number > random) {
-      tries = tries + 1;
-      console.log(tries);
-      return this.setState({ msg: "Way too high" });
-    } else if (number < random) {
-      tries = tries + 1;
-      console.log(tries);
-      return this.setState({ msg: "way to LOW" });
-    }
-  };
-
-  reset = () => {
-    this.setState({ random: Math.floor(Math.random() * 100) });
-    tries = 0;
-    this.setState({ msg: "" });
-  };
-
-  hint = () => {
-    this.setState({ wisdom: true });
-  };
-
-  display = () => {
-    if (this.state.wisdom) {
-      const m = Array.from({ length: 4 }, () =>
-        Math.floor(Math.random() * 100)
-      );
-      console.log(m);
-      return m.map(num => {
-        return <h1>{num}</h1>;
-      });
+      return this.compareColor(color);
     }
   };
 
   render() {
-    console.log(this.state.random);
-
-    const wisdom = this.state.wisdom;
-
     return (
-      <div>
-        <h1>Guessing Game</h1>
-        <h3>{this.state.msg}</h3>
+      <div className="center-it m-auto ">
+        <h1>Pick A Color!</h1>
 
-        <input type="number" onChange={this.handleChange} />
-        <button onClick={this.checkAll}>BANISH</button>
-        <button onClick={this.reset}>Surrender</button>
-        <button onClick={this.hint}>Wisdom</button>
-        {this.display()}
+        <br />
+        <h3>{this.state.msg}</h3>
+        <h5>{this.state.displayTriese}</h5>
+        {this.randomColor()}
+        {this.coloredBox()}
+
+        <div className="form-group form ">
+          <br />
+          <a href="/">
+            <button className="btn btn-danger p-6  ">Reset</button>
+          </a>
+        </div>
       </div>
     );
   }

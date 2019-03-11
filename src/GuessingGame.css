@@ -1,0 +1,23 @@
+.center-it {
+  padding-top: 50px;
+  padding-bottom: 50px;
+  width: 60rem;
+  margin: o auto;
+}
+
+.form {
+  padding: 20px;
+}
+
+.btn {
+  margin: 10px;
+}
+
+.square {
+  height: 80px;
+  width: 80px;
+}
+
+.opacity {
+  background-color: white;
+}
